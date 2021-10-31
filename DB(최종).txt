@@ -1,0 +1,208 @@
+-- 사용자				
+create table guguUser(				
+idx int auto_increment,				
+name varchar(10) not null,				
+email varchar(30) not null,				
+password varchar(10) not null,				
+birth int not null,				
+gender char(1) not null check (gender in('F','M')),				
+phone_number varchar(13) not null,				
+hobby varchar(30),   -- 취미				
+school varchar(20), -- 출신 학교				
+job varchar(20),   -- 직업				
+mbti char(4), -- MBTI				
+filename varchar(50),				
+short_intro varchar(30),				
+introduce varchar(60),-- 자기소개				
+title varchar(30),				
+primary key(idx)				
+);		
+-- -----------------------------------------------------------------------------				
+-- 홈				
+create table guguHome(				
+	u_idx int ,			
+	todayCount int default 0, -- 오늘 방문자			
+	totalCount int default 0,			
+	primary key(u_idx),			
+	foreign key(u_idx) references guguUser(idx)			
+);	-- 자기소개introduce varchar(60), -- 자기소개			
+				
+-- -----------------------------------------------------------------------------				
+-- 사진첩				
+create table guguGallery(				
+idx   int   auto_increment,				
+u_idx int,				
+category varchar(30),				
+title varchar(20) not null,				
+filename varchar(50) not null,				
+gdate timestamp default current_timestamp,				
+gcontent varchar(100),				
+heart int default 0,				
+primary key(idx),				
+foreign key(u_idx) references gugugallery_c(u_idx)				
+);			
+-- -----------------------------------------------------------------------------				
+-- 사진첩	카테고리			
+create table gugucategory (				
+	u_idx int,			
+	category varchar(30),			
+	foreign key(u_idx) references guguUser(idx)			
+)				
+				
+-- -----------------------------------------------------------------------------				
+-- 게시판				
+create table guguBoard(				
+	idx	int auto_increment,		
+	u_idx int,			
+	subject	varchar(40)	not null,	
+	content	varchar(1000),		
+	heart int default 0,			
+	wdate datetime default current_timestamp,			
+	commentCount smallint default 0,			
+	primary key(idx),			
+	foreign key(u_idx) references guguUser(idx)			
+);				
+-- -----------------------------------------------------------------------------				
+-- 방명록				
+create table guestBook(				
+	idx	int	auto_increment,	
+	u_idx int,			
+	v_idx int,			
+	content	varchar(200),		
+	name varchar(10) not null,			
+	wdate datetime default current_timestamp,			
+	primary key(idx),			
+	foreign key(u_idx) references guguUser(idx)			
+);				
+-- -----------------------------------------------------------------------------				
+-- 친구				
+create table mate(				
+	u_idx int, -- 친구 idx			
+	v_idx int, -- 내 idx			
+	state char(1) check (state in('H','O','X')), -- 친구 신청 : O, 친구일 때 : H			
+	nickName varchar(20),			
+	foreign key(u_idx) references guguUser(idx)			
+);				
+-- -----------------------------------------------------------------------------				
+-- 게시판 댓글				
+create table boardComment(				
+	idx int auto_increment,			
+	u_idx int not null,			
+	board_idx int,			
+	name varchar(10) not null,			
+	content	varchar(100) not null,		
+	wdate timestamp	default current_timestamp,		
+	primary key(idx),			
+	foreign key(board_idx) references guguBoard(idx)			
+);				
+-- -----------------------------------------------------------------------------				
+-- 갤러리 댓글				
+create table galleryComment(				
+idx int auto_increment,				
+u_idx int not null,				
+gallery_idx int,				
+name varchar(10) not null,				
+content varchar(100) not null,				
+wdate timestamp   default current_timestamp,				
+primary key(idx),				
+foreign key(gallery_idx) references guguGallery(idx)				
+);				
+-- -----------------------------------------------------------------------------				
+-- 방명록 댓글				
+create table gbookComment(				
+	idx int auto_increment,			
+	u_idx int not null,			
+	book_idx int,			
+	name varchar(10) not null,			
+	content	varchar(100) not null,		
+	wdate timestamp default current_timestamp,			
+	primary key(idx),			
+	foreign key(book_idx) references guestbook(idx)			
+);				
+drop table gbookcomment ;
+
+-- 게시판
+select * from guguBoard;
+
+select * from guguuser g ;
+
+-- insert into guguuser (name,email,password,birth,gender,phone_number) values ('test','test@naver.com','123',990101,'M','010-0000-0000');
+insert into guguuser (name,email,password,birth,gender,phone_number,hobby,school,job,mbti,introduce,filename) 
+values ('홍길동','hong@naver.com','123','941106','M','010-0000-0000','음악','학교','무직','ENFJ','hi','???');
+
+insert into guguboard(u_idx,subject,content,heart,commentCount) values(1,'hello','hi',0,1);
+select * from guguBoard where u_idx =1;
+
+delete from guguboard where idx =12;
+
+update guguboard set subject = 'hello', content = 'hi' 
+	where idx = 2;
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 방명록
+select * from guestBook;
+
+insert into guestbook(v_idx,content,name) values(1,'hi','홍길동');
+select * from guestbook where v_idx =1;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 게시판 댓글
+select * from  boardComment;
+
+insert into boardComment(board_idx,name,content) values(1,'홍길동','hi');
+select * from boardComment where board_idx =1;
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 갤러리 좋아요
+select * from gugugallery;
+
+insert into gugugallery (u_idx,title,filename,gcontent,heart) values(1,'1234','com_212.jpg','1234',1);
+
+update gugugallery set heart = 1
+	where idx = 2;
+	
+
+insert into heart values()
+
+UPDATE gugugallery SET heart = heart + 1 WHERE idx =2;
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+select * from guguboard;
+
+
+update guguboard set heart = heart + 1 where idx =1;
+
+select count(*) from guguboard;
+
+select count(*) from guguboard where idx;
+
+
+insert into gugucategory values(u_idx,'갤러리');
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+INSERT INTO jcpdev.guguboard
+(u_idx, subject, content, heart, commentCount)
+VALUES(1, '좋다', '오늘 날씨가 매우 좋은 거 같아!', 0, 0);
+INSERT INTO jcpdev.guguboard
+(u_idx, subject, content, heart, commentCount)
+VALUES(1, '뭐 먹을까?', '오늘 저녁 뭘 먹을지 고민된다..
+추천 음식 있으면 적어주고 가!', 1, 0);
+INSERT INTO jcpdev.guguboard
+(u_idx, subject, content, heart, commentCount)
+VALUES(1, '오늘', '오늘 귀여운 고양이를 봤어!
+지나가는데 너무 귀여워서 한참을 쳐다봤다니까ㅠㅠ!', 0, 0);
+INSERT INTO jcpdev.guguboard
+(u_idx, subject, content, heart, commentCount)
+VALUES(1, '복숭아', '아.. 복숭아 먹고싶다..', 0, 0);
+INSERT INTO jcpdev.guguboard
+(u_idx, subject, content, heart, commentCount)
+VALUES(1, '음...', '뭘 할까 고민된다..
+오늘 할 일을 다 끝냈으니 자유시간인데!', 0, 0);
+
